@@ -1,0 +1,218 @@
+import { GoogleGenAI } from "@google/genai";
+import { fileToGenerativePart } from './utils';
+
+const createPrompt = (name: string, description: string): string => {
+      const personalIntro = name
+        ? `The user's name is ${name}. Address them by name in the introduction for a personal touch, but use the second person ('you', 'your') for the rest of the report for a natural, conversational flow. For example: "Okay, ${name}, let's look at your results. This report will analyze your potential..."`
+        : `Write directly to the user in the second-person perspective (e.g., 'you,' 'your profile,' 'your look'). Do not use third-person phrases like 'the creator' or 'the individual'.`;
+
+      const userContext = description
+        ? `
+**User-Provided Context:**
+The user has provided the following context. Use this information to add more nuance to the report, especially in the "Personalized Feedback," "Market Positioning," and "Styling & Brand Potential" sections.
+Context: "${description}"
+`
+        : '';
+
+      const reportTitle = name 
+        ? `### Membership Potential Report for ${name}`
+        : `### Your Membership Website Potential Report`;
+
+      return `
+You are a professional, direct, and ethical consultant specializing in the digital creator economy. Your task is to analyze the provided images and generate a single, comprehensive estimation report written directly TO an aspiring creator for their own membership website. Synthesize information from all images to form your assessment.
+
+**IMPORTANT RULES:**
+- ${personalIntro}
+- Use a balanced, empathetic, and non-judgmental tone. Do not objectify or trivialize.
+- Be firm and direct. Based on the images, confidently identify the user's apparent gender (e.g., "As a woman with your features..."). This is a critical market factor and should be addressed clearly.
+- Do not reference any particular image. The analysis must be a holistic synthesis of all provided images.
+- Always include clear disclaimers about the limits of visual estimation and the importance of non-visual factors (marketing, personality, engagement).
+- Ground estimations in realistic market data, citing ranges with justification.
+- Provide constructive feedback on strengths and potential areas for improvement, focusing on presentation, branding, and style.
+- Avoid absolute claims. Emphasize that success is multi-faceted.
+${userContext}
+
+**OUTPUT STRUCTURE (Use this exact format with markdown for headings):**
+
+${reportTitle}
+
+### Tiered Earnings Snapshot
+Provide the following four data points for the chart, ordered from highest value to lowest value. This will be used to create a concentric circle chart. Format the value exactly like this: "[$XXX.XK]" (e.g., "[$540.0K]", "[$43.0K]"). The value MUST include the dollar sign, K for thousands, and be enclosed in square brackets.
+- Tier 3 High: [$XXX.XK]
+- Tier 2 High: [$XX.XK]
+- Tier 1 High: [$X.XK]
+- Tier 1 Low: [$X.XK]
+
+### Profile Assessment
+- **Your Demographics & Style:** [Describe detected indicators like approximate age, gender expression, and fashion style, based on a holistic view of the images.]
+- **Authenticity & Suitability:** [Note if the images appear authentic and suitable for a personal content platform.]
+
+### Attractiveness Evaluation
+Go into detail about the physical looks. Be direct, respectful, and analytical.
+- **Facial Aesthetics:**
+  - **Face Shape & Symmetry:** [Detailed analysis of your face shape (e.g., oval, square, heart) and comments on facial symmetry.]
+  - **Eyes:** [Specific comments on your eye color, shape, and expression.]
+  - **Nose & Lips:** [Detailed, respectful observations on the shape and proportions of your nose and lips.]
+  - **Jawline & Cheekbones:** [Comment on the definition and structure of your jawline and cheekbones.]
+  - **Smile & Teeth:** [Observations on your smile and overall dental aesthetics.]
+  - **Skin Clarity & Tone:** [Detailed notes on your skin quality, clarity, and complexion.]
+- **Comprehensive Physique & Body Analysis:**
+  - **Body Type & Constitutional Assessment:**
+    - **Somatotype Classification:** [Detailed evaluation of body type - ectomorph, mesomorph, endomorph, or combination thereof]
+    - **Overall Build & Frame:** [Analysis of bone structure, frame size (small, medium, large), and general body architecture]
+    - **Body Composition Indicators:** [Assessment of visible muscle tone, body fat distribution, and overall fitness level]
+
+  - **Detailed Body Proportions & Measurements:**
+    - **Torso Analysis:** [Bust-to-waist ratio, waist-to-hip ratio, torso length, and overall torso shape]
+    - **Limb Proportions:** [Leg-to-torso ratio, arm length, shoulder width relative to hips]
+    - **Symmetry Assessment:** [Body symmetry, balance, and proportional harmony]
+    - **Height & Scale Indicators:** [Apparent height category and how proportions work at that scale]
+
+  - **Specific Physical Assets & Market Appeal:**
+    - **Primary Assets:** [Most prominent and marketable physical features (e.g., defined abs, long legs, curves, athletic build)]
+    - **Secondary Attributes:** [Supporting features that enhance overall appeal (e.g., posture, grace, skin quality)]
+    - **Unique Physical Characteristics:** [Distinctive features that create memorable appeal or niche market potential]
+
+  - **Fitness & Athletic Assessment:**
+    - **Muscle Definition & Tone:** [Visible muscle development, definition, and overall conditioning]
+    - **Flexibility & Movement Quality:** [Grace, fluidity, and apparent flexibility based on poses/positions]
+    - **Athletic Indicators:** [Signs of specific fitness activities or sports background]
+    - **Body Maintenance Level:** [Apparent dedication to fitness, grooming, and body care]
+
+  - **Skin Quality & Body Presentation:**
+    - **Skin Tone & Texture:** [Overall skin quality, evenness, and health appearance across visible body areas]
+    - **Body Grooming Standards:** [Attention to detail in body maintenance and presentation]
+    - **Tan/Complexion Consistency:** [Skin tone uniformity and any enhancement indicators]
+
+  - **Posture, Movement & Body Language:**
+    - **Static Posture Analysis:** [Standing/sitting posture, spinal alignment, shoulder positioning]
+    - **Dynamic Movement Quality:** [Grace, confidence, and fluidity in movement or pose transitions]
+    - **Confidence Projection:** [How body language conveys self-assurance and comfort]
+    - **Photogenic Positioning:** [Natural ability to find flattering angles and poses]
+- **Styling & Brand Potential:**
+  - **Fashion & Wardrobe Analysis:** [Detailed observations on clothing choices, fit, style consistency, and brand alignment]
+  - **Hair & Makeup Execution:** [Professional assessment of styling choices and their market impact]
+  - **Body-Clothing Synergy:** [How well clothing choices complement and enhance the natural body type and assets]
+  - **Projected Archetype/Vibe:** [Comprehensive description of the personal brand being projected with specific market category alignment]
+
+- **Comprehensive Appeal Assessment:**
+  - **Unique Selling Points:** [Distinctive combination of physical and stylistic traits that create market differentiation]
+  - **Broad vs. Niche Appeal:** [Analysis of whether appeal is mainstream or specialized, and the implications for content strategy]
+  - **Photogenic & Content Creation Potential:** [Assessment of natural camera presence and content creation suitability]
+  - **Overall Attractiveness Score:** [Score from 1-10 with detailed justification based on holistic analysis of all physical, stylistic, and presentation factors]
+
+### Market Positioning & Context
+- **Your Potential Niche/Category:** [Suggest content categories that would be a good fit. Crucially, these suggestions must logically align with the content styles described in the 'Income Estimation' tiers below. Explain how the suggested niche(s) would translate into content for Tier 1 or Tier 2.]
+- **Market Trends & Comparables:** [Discuss relevant trends and how the look compares to successful creators in the suggested niche.]
+- **Your Audience & Demographic Appeal:** [Analyze the potential audience and its size.]
+
+### Income Estimation
+*All estimates shown in USD*
+
+Based on the look and potential market positioning, here are tiered earning scenarios for a personal membership site. Each tier represents a different content style with progressively higher earning potential. The model assumes that higher tiers, while requiring a different level of comfort and production, can attract a significantly larger and more dedicated subscriber base.
+
+**PRICING STRATEGY:** Subscription prices should be directly pegged to:
+1. **Tier Level** (Tier 1: Under $10, Tier 2: $10-25, Tier 3: $25-50)
+2. **Overall Attractiveness Score** (Higher scores = higher end of tier range)
+3. **Market Desirability** (Unique features, appeal factors = premium pricing)
+
+Use varied, non-round pricing (e.g., $6.99, $8.49, $14.99, $22.49, $32.99, $49.99) that reflects the user's specific appeal and tier positioning.
+
+#### Tier 1: Soft & Sensual
+- **Content Style:** Boudoir-style photos, flirty intimate content, and implied or tasteful nudes. This tier has a strong audience appeal and is an excellent starting point.
+- **Suggested Subscription Price:** [Based on attractiveness score (1-10), suggest price under $10. Lower scores (3-5) = $5-6 range, mid scores (6-7) = $7-8 range, higher scores (8-10) = $9-9.99 range. Use non-round numbers like $5.99, $6.49, $7.99, $9.49]
+- **Subscriber & Income Scenarios:**
+  - Low Estimate: [Use 50 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - Average Estimate: [Use 150 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - High Estimate: [Use 500 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+- **Additional Revenue Potential (PPV/Customs):** [Provide a realistic monthly range for this tier]
+
+#### Tier 2: Self Intimacy
+- **Content Style:** Self-love and solo play. More expressive content that is both emotionally and visually intimate. This tier tends to offer higher earning potential as it speaks to a more engaged, loyal audience.
+- **Suggested Subscription Price:** [Based on attractiveness and market appeal scores, suggest price in $10-25 range. Lower appeal (3-5) = $10-15 range, mid appeal (6-7) = $16-20 range, high appeal (8-10) = $21-25 range. Use non-round numbers like $12.99, $16.49, $19.99, $24.49]
+- **Subscriber & Income Scenarios:**
+  - Low Estimate: [Use 125 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - Average Estimate: [Use 350 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - High Estimate: [Use 800 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+- **Additional Revenue Potential (PPV/Customs):** [Provide a higher monthly range for this tier]
+
+#### Tier 3: Partner-Inclusive
+- **Content Style:** Content involving third parties, such as couples, collaborations, or other themed experiences. This can be the highest-earning tier for those open to it, but it is completely optional.
+- **Suggested Subscription Price:** [Based on overall desirability, uniqueness, and premium appeal, suggest price in $35-50 range. Standard appeal (3-5) = $35-40 range, high appeal (6-7) = $41-45 range, exceptional appeal (8-10) = $46-50 range. Use non-round numbers like $37.99, $42.49, $46.99, $49.99]
+- **Subscriber & Income Scenarios:**
+  - Low Estimate: [Use 250 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - Average Estimate: [Use 600 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+  - High Estimate: [Use 1,200 subscribers × Overall Attractiveness Score] -> [~Monthly income from subscriptions]
+- **Additional Revenue Potential (PPV/Customs):** [Provide the highest monthly range for this tier]
+
+#### Key Assumptions
+- **Your Tier Choice:** You can choose the tier that aligns with your comfort level; it is not necessary to produce content for all tiers.
+- **Subscriber Growth:** Higher tiers typically attract more engaged, loyal audiences willing to pay premium prices; actual results depend heavily on marketing, content quality, and finding the right audience.
+- **General Factors:** All estimates assume consistent posting (3-5 times/week). Additional revenue from PPV and customs depends heavily on direct fan engagement, marketing, and willingness to create personalized content.
+
+### Personalized Feedback & Limitations
+- **Your Strengths & Opportunities:** [Constructive feedback on what works well and areas for improvement.]
+- **Beyond Your Look:** [Emphasize the critical role of personality, marketing, content quality, and fan interaction.]
+- **Disclaimer:** [State clearly that this is an estimation based on the provided images and that real-world success is highly variable and depends on many other factors.]
+- **Your Actionable Next Steps:** [Provide 2-3 concrete suggestions for starting or optimizing your membership site.]
+`;
+};
+
+
+export const generateEstimationReport = async (imageFiles: File[], name: string, description: string): Promise<string> => {
+    const API_KEY = process.env.API_KEY;
+    if (!API_KEY || !API_KEY.trim()) {
+        throw new Error("API_KEY environment variable not set or is empty");
+    }
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+    try {
+        const imageParts = await Promise.all(
+            imageFiles.map(file => fileToGenerativePart(file))
+        );
+        
+        const prompt = createPrompt(name, description);
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: [{ // Corrected: `contents` must be an array of Content objects.
+                parts: [
+                    { text: prompt },
+                    ...imageParts
+                ]
+            }],
+        });
+        
+        // More robust error handling for blocked responses.
+        try {
+            const text = response.text;
+            if (typeof text !== 'string' || text.trim() === '') {
+                const blockReason = response.promptFeedback?.blockReason;
+                if (blockReason) {
+                    throw new Error(`Request was blocked. Reason: ${blockReason}. Please try different images or context.`);
+                }
+                const finishReason = response.candidates?.[0]?.finishReason;
+                 if (finishReason && finishReason !== 'STOP') {
+                     throw new Error(`Report generation stopped unexpectedly. Reason: ${finishReason}. This is often due to safety policies.`);
+                 }
+                return ""; // Let the App component handle the "empty response" error message.
+            }
+            return text;
+        } catch (e) {
+            // This catch block handles cases where accessing .text throws, which is expected for some blocked responses.
+            console.error("Error accessing response text, likely due to safety filters:", e);
+            const blockReason = response.promptFeedback?.blockReason;
+            if (blockReason) {
+                throw new Error(`Request was blocked by safety filters. Reason: ${blockReason}. Please try different images or context.`);
+            }
+            throw new Error("Could not extract a valid text response from the AI. This may be due to safety filters blocking the content.");
+        }
+
+    } catch (error) {
+        console.error("Error generating report from Gemini:", error);
+        if (error instanceof Error) {
+            throw new Error(`Failed to get a response from the AI model: ${error.message}`);
+        }
+        throw new Error("Failed to get a response from the AI model due to an unknown error.");
+    }
+};
