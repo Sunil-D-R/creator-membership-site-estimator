@@ -15,7 +15,10 @@ const loadingMessages = [
   'Finalizing recommendations...',
 ];
 
+type TabType = 'estimator' | 'dev-tools';
+
 const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('estimator');
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [name, setName] = useState<string>('');
@@ -105,7 +108,12 @@ const App: React.FC = () => {
 
     try {
       const reportText = await generateEstimationReport(imageFiles, name, description);
+      console.log('=== PARSING REPORT ===');
       const parsedReport = parseReport(reportText);
+      console.log('=== PARSED SECTIONS ===');
+      parsedReport.forEach((section, index) => {
+        console.log(`${index + 1}. ${section.title}`);
+      });
       if (parsedReport.length === 0) {
         throw new Error("The AI returned an empty or malformed response. This might be due to a safety policy violation. Please try different images.");
       }
@@ -617,8 +625,52 @@ const App: React.FC = () => {
           </h1>
         </div>
         <p style={{ color: 'var(--color-text-secondary)', maxWidth: '700px', margin: '0 auto' }}>
-          Upload photos and optionally add a name and description to receive a personalized, AI-driven analysis of your potential.
+          {activeTab === 'estimator'
+            ? 'Upload photos and optionally add a name and description to receive a personalized, AI-driven analysis of your potential.'
+            : 'Development tools for templates, recipes, and advanced configurations.'
+          }
         </p>
+
+        {/* Tab Navigation */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 'var(--spacing-sm)',
+          marginTop: 'var(--spacing-lg)',
+          borderBottom: '1px solid var(--color-border-divider)',
+          paddingBottom: 'var(--spacing-sm)'
+        }}>
+          <button
+            onClick={() => setActiveTab('estimator')}
+            style={{
+              padding: 'var(--spacing-sm) var(--spacing-md)',
+              backgroundColor: activeTab === 'estimator' ? 'var(--color-accent-primary)' : 'transparent',
+              color: activeTab === 'estimator' ? 'var(--color-secondary-bg)' : 'var(--color-text-secondary)',
+              border: '1px solid var(--color-border-divider)',
+              borderRadius: 'var(--border-radius-sm)',
+              cursor: 'pointer',
+              fontWeight: 'var(--font-weight-medium)',
+              transition: 'all var(--transition-speed-fast) var(--transition-ease)'
+            }}
+          >
+            Creator Estimator
+          </button>
+          <button
+            onClick={() => setActiveTab('dev-tools')}
+            style={{
+              padding: 'var(--spacing-sm) var(--spacing-md)',
+              backgroundColor: activeTab === 'dev-tools' ? 'var(--color-accent-primary)' : 'transparent',
+              color: activeTab === 'dev-tools' ? 'var(--color-secondary-bg)' : 'var(--color-text-secondary)',
+              border: '1px solid var(--color-border-divider)',
+              borderRadius: 'var(--border-radius-sm)',
+              cursor: 'pointer',
+              fontWeight: 'var(--font-weight-medium)',
+              transition: 'all var(--transition-speed-fast) var(--transition-ease)'
+            }}
+          >
+            Development Tools
+          </button>
+        </div>
       </header>
 
       <main style={{
@@ -630,7 +682,8 @@ const App: React.FC = () => {
         padding: 'var(--spacing-xl)',
         border: '1px solid var(--color-border-divider)'
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+        {activeTab === 'estimator' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
             <h2 style={{ fontSize: 'var(--font-size-h3)', fontWeight: 'var(--font-weight-semibold)' }}>1. Upload Your Images</h2>
@@ -776,9 +829,308 @@ const App: React.FC = () => {
               </>
             )}
           </div>
-        </div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+            <h2 style={{ fontSize: 'var(--font-size-h2)', fontWeight: 'var(--font-weight-bold)', textAlign: 'center', marginBottom: 'var(--spacing-lg)' }}>
+              Development Tools
+            </h2>
+
+            {/* Templates Section */}
+            <div style={{
+              backgroundColor: 'var(--color-primary-bg)',
+              padding: 'var(--spacing-lg)',
+              borderRadius: 'var(--border-radius-md)',
+              border: '1px solid var(--color-border-divider)'
+            }}>
+              <h3 style={{ fontSize: 'var(--font-size-h3)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--spacing-md)' }}>
+                📋 Templates & Recipes
+              </h3>
+              <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                Pre-built templates and recipes for common creator scenarios and configurations.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--spacing-md)' }}>
+                {/* Template Cards */}
+                <div style={{
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-md)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <h4 style={{ fontSize: 'var(--font-size-h4)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    🌸 Soft & Sensual Template
+                  </h4>
+                  <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-sm)' }}>
+                    Template for creators focusing on soft, romantic content with moderate pricing.
+                  </p>
+                  <button style={{
+                    backgroundColor: 'var(--color-accent-primary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Load Template
+                  </button>
+                </div>
+
+                <div style={{
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-md)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <h4 style={{ fontSize: 'var(--font-size-h4)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    🌶️ Spicy Template
+                  </h4>
+                  <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-sm)' }}>
+                    Template for creators with bold, provocative content and premium pricing.
+                  </p>
+                  <button style={{
+                    backgroundColor: 'var(--color-accent-primary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Load Template
+                  </button>
+                </div>
+
+                <div style={{
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-md)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <h4 style={{ fontSize: 'var(--font-size-h4)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    🔥 Extra Spicy Template
+                  </h4>
+                  <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-sm)' }}>
+                    Template for high-end creators with exclusive content and premium positioning.
+                  </p>
+                  <button style={{
+                    backgroundColor: 'var(--color-accent-primary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Load Template
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Recipes Section */}
+            <div style={{
+              backgroundColor: 'var(--color-primary-bg)',
+              padding: 'var(--spacing-lg)',
+              borderRadius: 'var(--border-radius-md)',
+              border: '1px solid var(--color-border-divider)'
+            }}>
+              <h3 style={{ fontSize: 'var(--font-size-h3)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--spacing-md)' }}>
+                🧪 Analysis Recipes
+              </h3>
+              <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                Pre-configured analysis recipes for specific creator types and market segments.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-sm)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <div>
+                    <strong>Fitness Creator Recipe</strong>
+                    <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', margin: '4px 0 0 0' }}>
+                      Optimized for athletic builds and fitness-focused content
+                    </p>
+                  </div>
+                  <button style={{
+                    backgroundColor: 'var(--color-text-secondary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Apply Recipe
+                  </button>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-sm)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <div>
+                    <strong>Artistic Creator Recipe</strong>
+                    <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', margin: '4px 0 0 0' }}>
+                      Tailored for creative, artistic personalities and aesthetic content
+                    </p>
+                  </div>
+                  <button style={{
+                    backgroundColor: 'var(--color-text-secondary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Apply Recipe
+                  </button>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: 'var(--color-secondary-bg)',
+                  padding: 'var(--spacing-sm)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  border: '1px solid var(--color-border-divider)'
+                }}>
+                  <div>
+                    <strong>Lifestyle Creator Recipe</strong>
+                    <p style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-secondary)', margin: '4px 0 0 0' }}>
+                      Perfect for lifestyle, fashion, and everyday content creators
+                    </p>
+                  </div>
+                  <button style={{
+                    backgroundColor: 'var(--color-text-secondary)',
+                    color: 'var(--color-secondary-bg)',
+                    border: 'none',
+                    padding: 'var(--spacing-xs) var(--spacing-sm)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--font-size-small)',
+                    fontWeight: 'var(--font-weight-medium)'
+                  }}>
+                    Apply Recipe
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Advanced Configuration */}
+            <div style={{
+              backgroundColor: 'var(--color-primary-bg)',
+              padding: 'var(--spacing-lg)',
+              borderRadius: 'var(--border-radius-md)',
+              border: '1px solid var(--color-border-divider)'
+            }}>
+              <h3 style={{ fontSize: 'var(--font-size-h3)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--spacing-md)' }}>
+                ⚙️ Advanced Configuration
+              </h3>
+              <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                Fine-tune analysis parameters and customize the AI assessment criteria.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-md)' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-small)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    Market Focus
+                  </label>
+                  <select style={{
+                    width: '100%',
+                    padding: 'var(--spacing-xs)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    border: '1px solid var(--color-border-divider)',
+                    backgroundColor: 'var(--color-secondary-bg)',
+                    color: 'var(--color-text-primary)'
+                  }}>
+                    <option>Mainstream Appeal</option>
+                    <option>Niche Specialist</option>
+                    <option>Premium Exclusive</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-small)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    Pricing Strategy
+                  </label>
+                  <select style={{
+                    width: '100%',
+                    padding: 'var(--spacing-xs)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    border: '1px solid var(--color-border-divider)',
+                    backgroundColor: 'var(--color-secondary-bg)',
+                    color: 'var(--color-text-primary)'
+                  }}>
+                    <option>Volume-Based</option>
+                    <option>Premium-Based</option>
+                    <option>Balanced</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-small)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-xs)' }}>
+                    Analysis Depth
+                  </label>
+                  <select style={{
+                    width: '100%',
+                    padding: 'var(--spacing-xs)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    border: '1px solid var(--color-border-divider)',
+                    backgroundColor: 'var(--color-secondary-bg)',
+                    color: 'var(--color-text-primary)'
+                  }}>
+                    <option>Standard</option>
+                    <option>Detailed</option>
+                    <option>Comprehensive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 'var(--spacing-md)', textAlign: 'center' }}>
+                <button style={{
+                  backgroundColor: 'var(--color-accent-primary)',
+                  color: 'var(--color-secondary-bg)',
+                  border: 'none',
+                  padding: 'var(--spacing-sm) var(--spacing-md)',
+                  borderRadius: 'var(--border-radius-md)',
+                  cursor: 'pointer',
+                  fontSize: 'var(--font-size-base)',
+                  fontWeight: 'var(--font-weight-medium)'
+                }}>
+                  Save Configuration
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <footer style={{ textAlign: 'center', marginTop: 'var(--spacing-xl)', fontSize: 'var(--font-size-small)', color: 'var(--color-text-muted)' }}>
-          <p>Disclaimer: This tool provides an estimation based on AI analysis of images. Real-world success depends on numerous factors including marketing, personality, content quality, and engagement. Use this for entertainment and informational purposes only.</p>
+          <p>
+            {activeTab === 'estimator'
+              ? 'Disclaimer: This tool provides an estimation based on AI analysis of images. Real-world success depends on numerous factors including marketing, personality, content quality, and engagement. Use this for entertainment and informational purposes only.'
+              : 'Development tools are for advanced users and developers. Use with caution and always backup your configurations.'
+            }
+          </p>
         </footer>
       </main>
     </div>
