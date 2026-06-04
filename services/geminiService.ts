@@ -36,7 +36,7 @@ ${userContext}
 **OUTPUT STRUCTURE (Use this exact format with markdown for headings):**
 
 IMPORTANT: You MUST follow this exact section order. Do NOT rearrange sections.
-CRITICAL: You MUST calculate actual numbers in the Market Analysis section. Identify the niche, estimate TAM, calculate market share percentage, and determine Maximum Subscriber Potential. Then use the specific target subscriber numbers: Conservative (~700), Realistic (~1,500), Optimistic (~2,500) for all tiers, while respecting the Maximum Subscriber Potential as the ceiling.
+CRITICAL: You MUST calculate actual numbers in the Market Analysis section. Identify the niche, estimate TAM, calculate market share percentage, and determine Maximum Subscriber Potential. The subscriber estimates and pricing MUST be directly tied to the Overall Creator Potential Score - higher scores get more subscribers and higher prices, lower scores get fewer subscribers and lower prices.
 TIMESTAMP: ${new Date().toISOString()} - This ensures fresh generation.
 
 ${reportTitle}
@@ -124,20 +124,17 @@ Go into detail about the physical looks, sensual appeal, and creator potential. 
 - **Market Saturation Analysis:** [Assess competition levels and market maturity in this niche]
 
 #### Market Share Calculation
-IMPORTANT: Calculate realistic subscriber estimates using this framework:
+CRITICAL: The Maximum Subscriber Potential MUST be directly tied to the Overall Creator Potential Score:
 
-**Market Share Percentage Based on Creator Potential Score:**
-IMPORTANT: Adjust TAM estimates to ensure realistic subscriber targets:
-- Target Maximum Subscriber Potential around 2,500-3,000 for high-quality creators
-- Target Maximum Subscriber Potential around 2,000-2,500 for above-average creators
-- Target Maximum Subscriber Potential around 1,000-1,500 for average creators
-
-Calculate market share percentages that achieve these targets:
-- Exceptional creators (9-10 score): Adjust % to reach ~2,500-3,000 max subscribers
-- High-quality creators (7-8 score): Adjust % to reach ~2,000-2,500 max subscribers
-- Above-average creators (5-6 score): Adjust % to reach ~1,500-2,000 max subscribers
-- Average creators (3-4 score): Adjust % to reach ~1,000-1,500 max subscribers
-- Below-average creators (1-2 score): Adjust % to reach ~500-1,000 max subscribers
+**Score-Based Maximum Subscriber Potential:**
+- Score 9.0-10.0 (Exceptional): Maximum 2,500-3,000 subscribers
+- Score 8.0-8.9 (High-Quality): Maximum 2,000-2,500 subscribers
+- Score 7.0-7.9 (Above-Average): Maximum 1,500-2,000 subscribers
+- Score 6.0-6.9 (Good): Maximum 1,200-1,500 subscribers
+- Score 5.0-5.9 (Average): Maximum 800-1,200 subscribers
+- Score 4.0-4.9 (Below-Average): Maximum 500-800 subscribers
+- Score 3.0-3.9 (Low): Maximum 300-500 subscribers
+- Score 1.0-2.9 (Very Low): Maximum 100-300 subscribers
 
 **Quality Multipliers to Market Share:**
 - High Market Differentiation (8-10): +50% market share potential
@@ -146,55 +143,85 @@ Calculate market share percentages that achieve these targets:
 - Strong Charisma (8-10): +25% engagement/loyalty bonus
 
 #### Subscriber Potential by Tier
-- **Maximum Subscriber Potential:** [Calculate: Niche TAM × Market Share Percentage = realistic subscriber ceiling]
+- **Maximum Subscriber Potential:** [Calculate based on the Overall Creator Potential Score using the table above. This is the ceiling for the Optimistic scenario.]
 - **Tier Distribution Analysis:** [Explain how subscribers would likely distribute across tiers based on niche characteristics and creator appeal]
 - **Market Trends & Comparables:** [Discuss relevant trends and how the look compares to successful creators in the suggested niche]
 
 ### Income Estimation
 *All estimates shown in USD*
 
-Based on the niche TAM analysis and market share calculations above, here are tiered earning scenarios for a personal membership site. Each tier represents a different content style with different subscriber conversion rates and pricing potential. Use the Maximum Subscriber Potential calculated above as the ceiling for all tier estimates.
+Based on the niche TAM analysis and market share calculations above, here are tiered earning scenarios for a personal membership site. Each tier represents a different content style with different subscriber conversion rates and pricing potential.
 
-**PRICING STRATEGY:** Subscription prices should be directly pegged to:
-1. **Tier Level** (Tier 1: Under $10, Tier 2: $10-25, Tier 3: $25-50)
-2. **Overall Attractiveness Score** (Higher scores = higher end of tier range)
-3. **Market Desirability** (Unique features, appeal factors = premium pricing)
+**CRITICAL PRICING RULES - MUST FOLLOW:**
+Subscription prices MUST be directly tied to the Overall Creator Potential Score:
 
-Use varied, non-round pricing (e.g., $6.99, $8.49, $14.99, $22.49, $32.99, $49.99) that reflects the user's specific appeal and tier positioning.
+**Tier 1 Pricing (Soft & Sensual):**
+- Score 9.0-10.0: $9.49-$9.99
+- Score 8.0-8.9: $8.49-$8.99
+- Score 7.0-7.9: $7.49-$7.99
+- Score 6.0-6.9: $6.49-$6.99
+- Score 5.0-5.9: $5.49-$5.99
+- Score 4.0-4.9: $4.49-$4.99
+- Score 3.0-3.9: $3.49-$3.99
+- Score 1.0-2.9: $2.49-$2.99
+
+**Tier 2 Pricing (Spicy):**
+- Score 9.0-10.0: $24.49-$24.99
+- Score 8.0-8.9: $21.49-$22.99
+- Score 7.0-7.9: $18.49-$19.99
+- Score 6.0-6.9: $15.49-$16.99
+- Score 5.0-5.9: $12.49-$13.99
+- Score 4.0-4.9: $10.49-$11.99
+- Score 3.0-3.9: $8.49-$9.99
+- Score 1.0-2.9: $6.49-$7.99
+
+**Tier 3 Pricing (Extra Spicy):**
+- Score 9.0-10.0: $49.99
+- Score 8.0-8.9: $46.49-$47.99
+- Score 7.0-7.9: $42.49-$44.99
+- Score 6.0-6.9: $38.49-$40.99
+- Score 5.0-5.9: $34.49-$36.99
+- Score 4.0-4.9: $30.49-$32.99
+- Score 3.0-3.9: $26.49-$28.99
+- Score 1.0-2.9: $22.49-$24.99
+
+**CRITICAL SUBSCRIBER ESTIMATE RULES - MUST FOLLOW:**
+Subscriber estimates MUST scale with the Overall Creator Potential Score and Maximum Subscriber Potential:
 
 #### Tier 1: Soft & Sensual
 - **Content Style:** Boudoir-style photos, flirty intimate content, and implied or tasteful nudes. This tier has a strong audience appeal and is an excellent starting point.
-- **Suggested Subscription Price:** [Based on attractiveness score (1-10), suggest price under $10. Lower scores (3-5) = $5-6 range, mid scores (6-7) = $7-8 range, higher scores (8-10) = $9-9.99 range. Use non-round numbers like $5.99, $6.49, $7.99, $9.49]
+- **Suggested Subscription Price:** [Use the score-based pricing table above to select the exact price based on Overall Creator Potential Score]
 - **Subscriber & Income Scenarios:**
-  IMPORTANT: Use TAM-based calculations to hit these subscriber targets:
-  - Conservative Estimate: [Target ~700 subscribers] -> [~Monthly income from subscriptions]
-  - Realistic Estimate: [Target ~1,500 subscribers] -> [~Monthly income from subscriptions]
-  - Optimistic Estimate: [Target ~2,500 subscribers, but never exceed Maximum Subscriber Potential] -> [~Monthly income from subscriptions]
-- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of subscribers × $75-100 per month. Example: If 1,500 subscribers, then 150 buyers × $75-100 = $11,250-15,000 additional monthly revenue]
+  CRITICAL: Calculate subscriber numbers as percentages of Maximum Subscriber Potential:
+  - Conservative Estimate: [30% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Realistic Estimate: [60% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Optimistic Estimate: [100% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of Realistic subscribers × $75-100 per month]
 
 #### Tier 2: Spicy
 IMPORTANT: Do NOT include any "Content Style" description for this tier.
-- **Suggested Subscription Price:** [Based on attractiveness and market appeal scores, suggest price in $10-25 range. Lower appeal (3-5) = $10-15 range, mid appeal (6-7) = $16-20 range, high appeal (8-10) = $21-25 range. Use non-round numbers like $12.99, $16.49, $19.99, $24.49]
+- **Suggested Subscription Price:** [Use the score-based pricing table above to select the exact price based on Overall Creator Potential Score]
 - **Subscriber & Income Scenarios:**
-  IMPORTANT: Use TAM-based calculations to hit these subscriber targets (smaller audience than Tier 1):
-  - Conservative Estimate: [Target ~500 subscribers] -> [~Monthly income from subscriptions]
-  - Realistic Estimate: [Target ~1,000 subscribers] -> [~Monthly income from subscriptions]
-  - Optimistic Estimate: [Target ~2,500 subscribers, but never exceed Maximum Subscriber Potential] -> [~Monthly income from subscriptions]
-- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of subscribers × $125-150 per month. Example: If 1,000 subscribers, then 100 buyers × $125-150 = $12,500-15,000 additional monthly revenue]
+  CRITICAL: Calculate subscriber numbers as percentages of Maximum Subscriber Potential (smaller audience than Tier 1):
+  - Conservative Estimate: [20% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Realistic Estimate: [40% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Optimistic Estimate: [100% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of Realistic subscribers × $125-150 per month]
 
 #### Tier 3: Extra Spicy
 IMPORTANT: Do NOT include any "Content Style" description for this tier.
-- **Suggested Subscription Price:** [Based on overall desirability, uniqueness, and premium appeal, suggest price in $35-50 range. Standard appeal (3-5) = $35-40 range, high appeal (6-7) = $41-45 range, exceptional appeal (8-10) = $46-50 range. Use non-round numbers like $37.99, $42.49, $46.99, $49.99]
+- **Suggested Subscription Price:** [Use the score-based pricing table above to select the exact price based on Overall Creator Potential Score]
 - **Subscriber & Income Scenarios:**
-  IMPORTANT: Use TAM-based calculations to hit these subscriber targets (smallest but highest-paying audience):
-  - Conservative Estimate: [Target ~300 subscribers] -> [~Monthly income from subscriptions]
-  - Realistic Estimate: [Target ~600 subscribers] -> [~Monthly income from subscriptions]
-  - Optimistic Estimate: [Target ~2,500 subscribers, but never exceed Maximum Subscriber Potential] -> [~Monthly income from subscriptions]
-- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of subscribers × $175-200 per month. Example: If 600 subscribers, then 60 buyers × $175-200 = $10,500-12,000 additional monthly revenue]
+  CRITICAL: Calculate subscriber numbers as percentages of Maximum Subscriber Potential (smallest but highest-paying audience):
+  - Conservative Estimate: [12% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Realistic Estimate: [24% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+  - Optimistic Estimate: [100% of Maximum Subscriber Potential] -> [Calculate: subscribers × price = monthly income]
+- **Additional Revenue Potential (PPV/Customs):** [Calculate: 10% of Realistic subscribers × $175-200 per month]
 
 #### Key Assumptions
-- **TAM-Based Calculations:** All subscriber estimates are based on your identified niche's Total Addressable Market and your calculated market share potential. These represent realistic ceilings, not guaranteed outcomes.
-- **Tier Distribution:** All tiers target ~700-2,500 subscribers with conservative (~700), realistic (~1,500), and optimistic (~2,500) scenarios. Actual distribution depends on content strategy and audience preferences.
+- **Score-Based Calculations:** All subscriber estimates and pricing are directly tied to your Overall Creator Potential Score. Higher scores = more subscribers and higher prices. Lower scores = fewer subscribers and lower prices.
+- **Maximum Subscriber Potential:** This is calculated based on your Overall Creator Potential Score and represents the ceiling for the Optimistic scenario across all tiers.
+- **Tier Distribution:** Subscriber estimates are calculated as percentages of your Maximum Subscriber Potential. Tier 1 has the largest audience, Tier 3 has the smallest but highest-paying audience.
 - **Market Share Factors:** Your actual market share depends on Creator Potential Score, marketing effectiveness, content consistency, and competition levels in your niche.
 - **Your Tier Choice:** You can choose the tier that aligns with your comfort level; it is not necessary to produce content for all tiers.
 - **Growth Timeline:** Estimates represent mature audience size (6-12 months). Initial growth will be slower and depends heavily on marketing, content quality, and finding the right audience.
@@ -284,5 +311,78 @@ export const generateEstimationReport = async (imageFiles: File[], name: string,
             throw new Error(`Failed to get a response from the AI model: ${error.message}`);
         }
         throw new Error("Failed to get a response from the AI model due to an unknown error.");
+    }
+};
+
+/**
+ * Generate a static HTML site from report text using LLM
+ */
+export const generateSiteFromReport = async (
+    reportText: string,
+    creatorName: string,
+    timestamp: string,
+    htmlTemplate: string
+): Promise<string> => {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error("VITE_GEMINI_API_KEY is not set in environment variables");
+    }
+
+    const genAI = new GoogleGenAI({ apiKey });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+
+    const prompt = `You are a web developer tasked with converting a creator assessment report into a beautiful HTML website.
+
+You will be given:
+1. A report in markdown/text format
+2. An HTML template with placeholders
+3. Creator name and timestamp
+
+Your task:
+- Convert the report text into well-formatted HTML
+- Replace {{CREATOR_NAME}} with the creator's name
+- Replace {{TIMESTAMP}} with the formatted timestamp
+- Replace {{REPORT_CONTENT}} with the report content formatted as HTML sections
+- Use semantic HTML: <section class="report-section">, <h2>, <h3>, <h4>, <p>, <ul>, <li>, <strong>
+- Preserve all the report content - don't summarize or skip sections
+- Make it visually appealing with proper structure
+
+IMPORTANT:
+- Do NOT include any markdown code fences (\`\`\`html or \`\`\`)
+- Return ONLY the complete HTML document
+- Start with <!DOCTYPE html> and end with </html>
+- Do not add any explanatory text before or after the HTML
+
+Here is the report text:
+---
+${reportText}
+---
+
+Creator Name: ${creatorName}
+Timestamp: ${new Date(timestamp).toLocaleString()}
+
+HTML Template:
+---
+${htmlTemplate}
+---
+
+Generate the complete HTML now:`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+
+        let html = response.text();
+
+        // Clean up any markdown code fences if the LLM added them
+        html = html.replace(/^```html\n?/i, '').replace(/\n?```$/i, '').trim();
+
+        return html;
+    } catch (error) {
+        console.error("Error generating site from report:", error);
+        if (error instanceof Error) {
+            throw new Error(`Failed to generate site: ${error.message}`);
+        }
+        throw new Error("Failed to generate site due to an unknown error.");
     }
 };

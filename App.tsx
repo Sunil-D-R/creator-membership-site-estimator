@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import { generateEstimationReport } from './services/geminiService';
+import { generateStaticSite } from './services/siteGeneratorService';
+import { deployToCloudflarePages, sanitizeProjectName } from './services/cloudflareService';
 import ImageUploader from './components/ImageUploader';
 import ReportDisplay from './components/ReportDisplay';
 import { AppIcon, SparklesIcon, DownloadIcon } from './components/icons';
@@ -24,8 +26,11 @@ const App: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [report, setReport] = useState<ReportSection[] | null>(null);
+  const [reportTimestamp, setReportTimestamp] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [isDeploying, setIsDeploying] = useState<boolean>(false);
+  const [deploymentUrl, setDeploymentUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const loadingMessage = loadingMessages[loadingMessageIndex];
@@ -118,6 +123,13 @@ const App: React.FC = () => {
         throw new Error("The AI returned an empty or malformed response. This might be due to a safety policy violation. Please try different images.");
       }
       setReport(parsedReport);
+      const timestamp = new Date().toISOString();
+      setReportTimestamp(timestamp);
+
+      // Automatically deploy to Cloudflare Pages
+      if (name) {
+        deployReportToCloudflare(parsedReport, name, timestamp);
+      }
     } catch (err) {
       console.error(err);
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
@@ -126,7 +138,50 @@ const App: React.FC = () => {
       setIsLoading(false);
     }
   }, [imageFiles, name, description]);
-  
+
+  const deployReportToCloudflare = async (
+    reportSections: ReportSection[],
+    creatorName: string,
+    timestamp: string
+  ) => {
+    setIsDeploying(true);
+    setDeploymentUrl(null);
+
+    try {
+      console.log('🚀 Starting automatic deployment to Cloudflare Pages...');
+
+      // Generate static site files (now async with LLM)
+      const files = await generateStaticSite({
+        creatorName,
+        reportSections,
+        timestamp,
+      });
+
+      // Open local preview in new tab
+      const htmlContent = files.get('index.html');
+      if (htmlContent) {
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        console.log('📄 Opened local preview in new tab');
+      }
+
+      // Deploy to Cloudflare Pages
+      const result = await deployToCloudflarePages(creatorName, files);
+
+      if (result.success && result.url) {
+        setDeploymentUrl(result.url);
+        console.log('✅ Deployment successful:', result.url);
+      } else {
+        console.error('❌ Deployment failed:', result.error);
+      }
+    } catch (error) {
+      console.error('❌ Deployment error:', error);
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
   const handleDownloadReport = async () => {
     if (!report) return;
 
@@ -717,6 +772,28 @@ const App: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                {name && (
+                  <div style={{
+                    marginTop: 'var(--spacing-xs)',
+                    padding: 'var(--spacing-sm)',
+                    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(139, 195, 74, 0.1) 100%)',
+                    borderRadius: 'var(--border-radius-sm)',
+                    border: '1px solid rgba(76, 175, 80, 0.3)',
+                  }}>
+                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.25rem' }}>
+                      📍 Your report will be deployed to:
+                    </div>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#2e7d32',
+                      fontFamily: 'monospace',
+                      wordBreak: 'break-all'
+                    }}>
+                      https://{sanitizeProjectName(name)}.pages.dev
+                    </div>
+                  </div>
+                )}
               </div>
 
                <div>
@@ -826,6 +903,132 @@ const App: React.FC = () => {
                         {isDownloading ? 'Generating PDF...' : 'Download Report as PDF'}
                     </button>
                 </div>
+
+                {/* Deployment Status */}
+                {name && (
+                  <div style={{
+                    marginTop: '2rem',
+                    padding: '1.5rem',
+                    background: isDeploying
+                      ? 'linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%)'
+                      : deploymentUrl
+                      ? 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(139, 195, 74, 0.1) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 217, 61, 0.1) 100%)',
+                    borderRadius: '12px',
+                    border: isDeploying
+                      ? '1px solid rgba(255, 193, 7, 0.3)'
+                      : deploymentUrl
+                      ? '1px solid rgba(76, 175, 80, 0.3)'
+                      : '1px solid rgba(255, 107, 107, 0.2)',
+                  }}>
+                    {isDeploying ? (
+                      <>
+                        <h3 style={{ marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            animation: 'spin 1s linear infinite',
+                          }}>⏳</span>
+                          Deploying to Cloudflare Pages...
+                        </h3>
+                        <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                          <div style={{
+                            fontSize: '0.875rem',
+                            color: '#666',
+                            marginBottom: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <span style={{ color: '#4CAF50', fontSize: '1.2rem' }}>✓</span>
+                            <span>Report generated</span>
+                          </div>
+                          <div style={{
+                            fontSize: '0.875rem',
+                            color: '#666',
+                            marginBottom: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <span style={{ color: '#4CAF50', fontSize: '1.2rem' }}>✓</span>
+                            <span>Local preview opened in new tab</span>
+                          </div>
+                          <div style={{
+                            fontSize: '0.875rem',
+                            color: '#FF9800',
+                            fontWeight: '600',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <span style={{
+                              display: 'inline-block',
+                              width: '12px',
+                              height: '12px',
+                              border: '2px solid #FF9800',
+                              borderTopColor: 'transparent',
+                              borderRadius: '50%',
+                              animation: 'spin 0.8s linear infinite'
+                            }}></span>
+                            <span>Uploading to Cloudflare Pages...</span>
+                          </div>
+                        </div>
+                        <p style={{ color: '#999', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                          This usually takes 10-30 seconds
+                        </p>
+                        <style>{`
+                          @keyframes spin {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                          }
+                        `}</style>
+                      </>
+                    ) : deploymentUrl ? (
+                      <>
+                        <h3 style={{ marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: '600', color: '#2e7d32' }}>
+                          ✅ Site Deployed Successfully!
+                        </h3>
+                        <p style={{ marginBottom: '1rem', color: '#666', fontSize: '0.875rem' }}>
+                          Your report is now live and accessible to anyone with the link.
+                        </p>
+                        <a
+                          href={deploymentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.75rem 1.5rem',
+                            background: 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            transition: 'transform 0.2s',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                        >
+                          🌐 View Live Site
+                        </a>
+                        <p style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#999' }}>
+                          {deploymentUrl}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h3 style={{ marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: '600' }}>
+                          🚀 Cloudflare Pages Deployment
+                        </h3>
+                        <p style={{ color: '#666', fontSize: '0.875rem' }}>
+                          Deployment will start automatically when you generate a report.
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </div>
